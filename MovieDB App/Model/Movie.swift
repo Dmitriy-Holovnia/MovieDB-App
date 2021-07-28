@@ -7,26 +7,26 @@
 
 import Foundation
 
-struct Movie: Codable {
-    let adult: Bool
-    let backdropPath: String
+struct Movie: Codable, Hashable {
+    let id: Int?
+    let adult: Bool?
+    let backdropPath: String?
     let belongsToCollection: String?
-    let budget: Int
-    let genres: [Genre]
-    let homepage: String
-    let id: Int
-    let imdbID, originalLanguage, originalTitle, overview: String
-    let popularity: Double
-    let posterPath: String
-    let productionCompanies: [ProductionCompany]
-    let productionCountries: [ProductionCountry]
-    let releaseDate: String
-    let revenue, runtime: Int
-    let spokenLanguages: [SpokenLanguage]
-    let status, tagline, title: String
-    let video: Bool
-    let voteAverage: Double
-    let voteCount: Int
+    let budget: Int?
+    let genres: [Genre]?
+    let homepage: String?
+    let imdbID, originalLanguage, originalTitle, overview: String?
+    let popularity: Double?
+    let posterPath: String?
+    let productionCompanies: [ProductionCompany]?
+    let productionCountries: [ProductionCountry]?
+    let releaseDate: String?
+    let revenue, runtime: Int?
+    let spokenLanguages: [SpokenLanguage]?
+    let status, tagline, title: String?
+    let video: Bool?
+    let voteAverage: Double?
+    let voteCount: Int?
 
     enum CodingKeys: String, CodingKey {
         case adult
@@ -46,5 +46,9 @@ struct Movie: Codable {
         case status, tagline, title, video
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
+    }
+    
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        lhs.id == rhs.id
     }
 }

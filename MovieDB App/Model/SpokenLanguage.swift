@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SpokenLanguage: Codable {
+struct SpokenLanguage: Codable, Hashable {
     let englishName, iso639, name: String
 
     enum CodingKeys: String, CodingKey {
