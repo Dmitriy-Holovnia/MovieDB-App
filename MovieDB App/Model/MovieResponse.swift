@@ -1,8 +1,8 @@
 //
-//  MovieResponce.swift
+//  MovieResponse.swift
 //  MovieDB App
 //
-//  Created by Dima Golovnya on 28.07.2021.
+//  Created by Dmitiy Golovnia on 30.07.2021.
 //
 
 import Foundation

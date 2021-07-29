@@ -28,6 +28,12 @@ final class MasterVC: UIViewController {
         configureDataSource()
         viewModel = MainViewModel()
         viewModel.update = updateUI
+        viewModel.fetchLocalMovies()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        viewModel.fetchWebMovies()
     }
     
     //MARK: Configure UI
@@ -102,7 +108,7 @@ extension MasterVC: UICollectionViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height) {
-            viewModel.fetchMovies()
+            viewModel.fetchWebMovies()
         }
     }
 }

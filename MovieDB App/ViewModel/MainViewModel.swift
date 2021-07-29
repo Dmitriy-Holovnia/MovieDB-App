@@ -7,54 +7,61 @@
 
 import Foundation
 
-enum ViewModelState: Equatable {
+enum ViewModelState {
     case initial, updating, success, failure(Error)
-    
-    static func == (lhs: ViewModelState, rhs: ViewModelState) -> Bool {
-        switch (lhs, rhs) {
-        case (.updating, .updating):
-            return true
-        default:
-            return false
-        }
-    }
 }
 
 protocol MainViewModelProtocol {
     var currentPage: Int { get set }
     var movies: [Movie] { get set }
     var update: ((ViewModelState) -> Void)? { get set }
-    var currentState: ViewModelState { get }
+    var isLoading: Bool { get }
     
-    func fetchMovies()
+    func fetchWebMovies()
+    func fetchLocalMovies()
 }
 
 final class MainViewModel: MainViewModelProtocol {
     
     var currentPage: Int = 1
     var movies: [Movie] = []
-    var currentState: ViewModelState = .initial
+    var isLoading: Bool  = false
     
     var update: ((ViewModelState) -> Void)?
     
-    func fetchMovies() {
-        if currentState == .updating { return }
-        currentState = .updating
+    private let repository = MovieRepository()
+    
+    func fetchWebMovies() {
+        if isLoading { return }
+        isLoading.toggle()
         update?(.updating)
-        
-        NetworkService.shared.getMovies(page: currentPage) { [weak self] result in
-            guard let self = self else { return }
+        print(#function)
+        repository.getAll(page: currentPage, type: .remote) { result in
             switch result {
-            case .success(let reponse):
-                self.movies += reponse.results
+            case .success(let movies):
+                if self.currentPage == 1 { self.movies.removeAll() }
+                self.movies += movies
+                self.isLoading = false
                 self.currentPage += 1
-                self.currentState = .success
-                DispatchQueue.main.async {
-                    self.update?(.success)
-                }
+                self.update?(.success)
+            case .failure(let error):
+                self.isLoading = false
+                self.update?(.failure(error))
+            }
+        }
+    }
+    
+    func fetchLocalMovies() {
+        update?(.updating)
+        print(#function)
+        repository.getAll(type: .local) { [unowned self] result in
+            switch result {
+            case .success(let movies):
+                self.movies = movies
+                movies.forEach({ print("id: \($0.id)")})
+                self.update?(.success)
             case .failure(let error):
                 self.update?(.failure(error))
-                self.currentState = .failure(error)
             }
         }
     }
