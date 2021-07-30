@@ -5,75 +5,10 @@
 //  Created by Dmitiy Golovnia on 29.07.2021.
 //
 
-import Foundation
+import UIKit
 import CoreData
 import SystemConfiguration
 
-//MARK: CoreData
-protocol DomainModel {
-    associatedtype DomainModelType
-    func toDomainModel() -> DomainModelType
-}
-
-class CoreDataContextProvider {
-    
-    private let modelName: String
-    
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: self.modelName)
-        container.loadPersistentStores { _, error in
-            if let error = error {
-                print("Erorr to load persistent store: \(error.localizedDescription)")
-            }
-        }
-        return container
-    }()
-    
-    init(modelName: String) {
-        self.modelName = modelName
-    }
-    
-    lazy var viewContext: NSManagedObjectContext = {
-        return persistentContainer.viewContext
-    }()
-    
-    func saveContext() {
-        guard viewContext.hasChanges else { return }
-        
-        do {
-            try viewContext.save()
-          } catch {
-            print("Erorr to save data: \(error.localizedDescription)")
-          }
-    }
-    
-    func addMovie(movie: Movie) {
-        let newMovie = MOMovie(context: viewContext)
-        newMovie.id = Int64(movie.id)
-        newMovie.adult = movie.adult ?? false
-        newMovie.title = movie.title
-        newMovie.overview = movie.overview
-        newMovie.posterPath = movie.posterPath
-        newMovie.releaseDate = movie.releaseDate
-        
-        saveContext()
-    }
-    
-    func addMovies(movies: [Movie]) {
-        movies.forEach({ addMovie(movie: $0) })
-    }
-    
-    func getAllMovies(completion: @escaping (Result<[MOMovie], Error>) -> Void) {
-        let request = NSFetchRequest<MOMovie>(entityName: "MOMovie")
-        
-        do {
-            let movies = try viewContext.fetch(request)
-            completion(.success(movies))
-        } catch {
-            completion(.failure(error))
-        }
-    }
-}
 //MARK: Repository
 enum RepositoryType {
     case local, remote
@@ -90,7 +25,7 @@ struct MovieRepository: Repository {
     typealias T = Movie
     
     private let networkService = NetworkService()
-    private let database = CoreDataContextProvider(modelName: "DataModel")
+    private let database = CoreDataService()
     
     func get(id: Int, type: RepositoryType, completion: @escaping (Result<Movie, Error>) -> Void) {
         print(#function)

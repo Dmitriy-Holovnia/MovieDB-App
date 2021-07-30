@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 enum ViewModelState {
     case initial, updating, success, failure(Error)

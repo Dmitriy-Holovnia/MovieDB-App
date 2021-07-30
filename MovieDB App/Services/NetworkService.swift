@@ -12,7 +12,7 @@ enum NetworkError: Error {
     case unknowError
 }
 
-class NetworkService {
+final class NetworkService {
     func getMovies(page: Int, completion: @escaping (Result<Data, Error>) -> Void) {
         guard var urlComponents = URLComponents(string: "https://api.themoviedb.org/3/movie/top_rated") else {
             completion(.failure(NetworkError.urlError))

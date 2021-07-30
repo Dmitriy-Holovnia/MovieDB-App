@@ -35,7 +35,7 @@ extension Movie {
         case releaseDate = "release_date"
     }
     
-    static func == (lhs: Movie, rhs: Movie) -> Bool {
-        lhs.id == rhs.id
+    func hash(into hasher: inout Hasher) {
+        return hasher.combine(id)
     }
 }

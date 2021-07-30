@@ -9,31 +9,10 @@ import UIKit
 
 final class SplitVC: UISplitViewController {
     
-    let masterVC = UINavigationController(rootViewController: MasterVC())
-    let detailVC = UINavigationController(rootViewController: DetailVC())
-    
-    //MARK: UI Elements
+    private let masterVC = UINavigationController(rootViewController: MasterVC())
+    private let detailVC = UINavigationController(rootViewController: DetailVC())
     
     //MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .red
-        viewControllers = [masterVC, detailVC]
-        preferredDisplayMode = .oneBesideSecondary
-        delegate = self
-    }
-    
-    
-}
-
-extension SplitVC: UISplitViewControllerDelegate {
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-        return true
-    }
-}
-
-final class DetailVC: UIViewController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -41,12 +20,15 @@ final class DetailVC: UIViewController {
     
     private func setup() {
         view.backgroundColor = .white
-        
-        if let splitViewController = splitViewController {
-            if let navigationController = splitViewController.viewControllers.last as? UINavigationController {
-                navigationController.topViewController?.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-                navigationController.topViewController?.navigationItem.leftItemsSupplementBackButton = true
-            }
-        }
+        viewControllers = [masterVC, detailVC]
+        preferredDisplayMode = .oneBesideSecondary
+        delegate = self
+    }
+}
+ 
+//MARK: UISplitViewControllerDelegate
+extension SplitVC: UISplitViewControllerDelegate {
+    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+        return true
     }
 }
